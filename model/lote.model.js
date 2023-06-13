@@ -20,6 +20,20 @@ class LoteModel
             return []
         }
     }
+
+    static async insertLoteUserModel(nombre_lote, observacion_lote, peso, fk_tipo_peso,email,fk_id_mercado){
+        try{
+            var conn = await connDB().promise()
+            await conn.query("INSERT INTO compostlab.lote ( nombre_lote, observacion_lote, peso, fk_tipo_peso," +
+                "fk_email_usuario, fk_id_mercado) VALUES ('"+nombre_lote+"','"+observacion_lote+"', "+peso+", "+fk_tipo_peso+"," +
+                " '"+email+"', "+fk_id_mercado+")")
+            await conn.end()
+            return true
+        }catch (e) {
+            console.log(e)
+            return false
+        }
+    }
 }
 
 module.exports = LoteModel
