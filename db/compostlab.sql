@@ -9,6 +9,7 @@ create table if not exists usuario(email_usuario varchar(50) primary key,
     activeReporte smallint(1) default 0,activeNotificacion smallint(1) default 0,
     activeRecordatorio smallint(1) default 0,estado smallint(1) default 1);
 alter table usuario add column activeUsuarios smallint(1) default 0;
+alter table usuario add column activeInsumo smallint(1) default 0;
 create table if not exists mercado(id_mercado int auto_increment primary key,nombre_mercado varchar(250) not null,
                      encargado_mercado varchar(250) not null,email_mercado varchar(250) not null,
                      telefono_mercado varchar(250) not null,dire_mercado varchar(250) not null,
@@ -61,4 +62,4 @@ insert into tipo_peso(detalle_tipo_peso) values ('LIBRAS');
 insert into tipo_peso(detalle_tipo_peso) values ('KILOS');
 
 -- CONSULTAS
-select U.email_usuario,U.nombres,U.apellido,U.cedula,U.telefono,U.estado from usuario as U;
+select * from usuario;
