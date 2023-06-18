@@ -8,6 +8,7 @@ create table if not exists usuario(email_usuario varchar(50) primary key,
     activeHistorial smallint(1) default 0,activeDespacho smallint(1) default 0,
     activeReporte smallint(1) default 0,activeNotificacion smallint(1) default 0,
     activeRecordatorio smallint(1) default 0,estado smallint(1) default 1);
+alter table usuario add column activeUsuarios smallint(1) default 0;
 create table if not exists mercado(id_mercado int auto_increment primary key,nombre_mercado varchar(250) not null,
                      encargado_mercado varchar(250) not null,email_mercado varchar(250) not null,
                      telefono_mercado varchar(250) not null,dire_mercado varchar(250) not null,
@@ -37,6 +38,13 @@ create table insumo_lote(id_insumo_lote int auto_increment primary key,fk_id_lot
 alter table insumo_lote add constraint rel_insumo_lote_insumo foreign key insumo_lote(fk_id_insumo) references insumo(id_insumo);
 alter table insumo_lote add constraint rel_insumo_lote_lote foreign key insumo_lote(fk_id_lote) references lote(id_lote);
 
+create table historial_lote(id_historial_lote int auto_increment primary key ,vTemperatura decimal(10,2) default 0.00,
+                            vHumedad decimal(10,2) default 0.00,vPh decimal(10,2) default 0.00,
+                            vOxigeno decimal(10,2) default 0.00,detalleHistorial text,
+                            fechaHistorial datetime default now(),
+                            FK_lote int not null );
+
+alter table historial_lote add constraint rel_historial_lote_lote foreign key historial_lote(FK_lote) references lote(id_lote);
 
 -- SQL DEFECTOS
 insert into usuario(email_usuario, nombres, apellido, cedula, telefono, contrasenia)
@@ -52,7 +60,5 @@ insert into tipo_peso(detalle_tipo_peso) values ('TONELADA');
 insert into tipo_peso(detalle_tipo_peso) values ('LIBRAS');
 insert into tipo_peso(detalle_tipo_peso) values ('KILOS');
 
-select * from lote;
-INSERT INTO compostlab.lote ( nombre_lote, observacion_lote, peso, fk_tipo_peso,
-                             fk_email_usuario, fk_id_mercado) VALUES ('Lote 001',
-                             'Lote confecto de carga', 100, 1, 'guaman1579@gmail.com', 1);
+-- CONSULTAS
+select U.email_usuario,U.nombres,U.apellido,U.cedula,U.telefono,U.estado from usuario as U;

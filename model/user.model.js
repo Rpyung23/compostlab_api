@@ -30,6 +30,18 @@ class UserModel
             return []
         }
     }
+
+    static async readAllUsuarioModel(){
+        try {
+            var conn = await connDB().promise()
+            var sql = "select U.email_usuario,U.nombres,U.apellido,U.cedula,U.telefono,U.estado from usuario as U"
+            var datos = await conn.query(sql)
+            await conn.end()
+            return datos[0]
+        }catch (e) {
+            return []
+        }
+    }
 }
 
 module.exports = UserModel

@@ -43,6 +43,24 @@ app.post("/login_user",async function (req, res)
     }
 })
 
+app.post("/read_usuarios",async function (req, res)
+{
+    var result = await UserController.readAllUsuarioController();
+
+    try{
+        res.status(200).json({
+            status_code: result ? 200 : 300,
+            msm: result ? 'Usuario Lista' : 'No se ha podido listar usuarios',
+            datos:result
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm: e.toString(),
+            datos:[]
+        })
+    }
+})
 
 
 module.exports = app

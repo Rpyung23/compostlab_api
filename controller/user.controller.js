@@ -8,6 +8,10 @@ class UserController
     static async loginUsuarioModel(email,password){
         return await UserModel.loginUsuarioModel(email,password)
     }
+
+    static async readAllUsuarioController(){
+        return await UserModel.readAllUsuarioModel()
+    }
 }
 
 module.exports = UserController

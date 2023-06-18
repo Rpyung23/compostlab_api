@@ -43,4 +43,83 @@ app.post("/add_lote_usuer",Jwt.veriJwt,async function(req,res)
 })
 
 
+app.put("/sendLoteDespacho",Jwt.veriJwt,async function(req,res)
+{
+
+    var result = await LoteController.sendLoteDespachoController(req.body.lote)
+
+    try{
+        res.status(200).json({
+            status_code: result  ? 200 : 300,
+            msm: result  ? 'Lote en Despacho' : 'No se pudo enviar lote',
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm: e.toString()
+        })
+    }
+})
+
+
+app.post("/add_historial_lote",Jwt.veriJwt,async function(req,res)
+{
+    var result = await LoteController.addHistorialLoteController(req.body.vTemperatura, req.body.vHumedad,
+        req.body.vPh, req.body.vOxigeno, req.body.detalleHistorial, req.body.lote)
+
+    try{
+        res.status(200).json({
+            status_code: result  ? 200 : 300,
+            msm: result  ? 'Historial agregado' : 'No se pudo agregar el historial',
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm: e.toString()
+        })
+    }
+
+})
+
+app.get("/readDetalleLote/:lote",async function(req, res)
+{
+
+    try{
+        var result = await LoteController.readHistorialDetalleLoteModel(req.params.lote)
+        res.status(200).json({
+            status_code:result.length > 0 ? 200 :300,
+            msm: result.length > 0 ? 'Datos consultados con éxito' : 'No existen datos disponibles',
+            datos:  result
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code: 400,
+            msm: e.toString(),
+            datos:  []
+        })
+    }
+
+})
+
+
+app.post("/despacho_lote_usuer",Jwt.veriJwt,async function(req,res)
+{
+    var result = await LoteController.readLoteDespachoUserController(req.body.decoded.datosJWT.email_usuario)
+
+    try{
+        res.status(200).json({
+            status_code: result.length > 0 ? 200 : 300,
+            msm: result.length > 0 ? 'Lotes encontrados' : 'No existen Lotes',
+            datos: result
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm: e.toString(),
+            datos: []
+        })
+    }
+
+})
+
 module.exports = app
