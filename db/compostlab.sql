@@ -31,9 +31,13 @@ create table lote(id_lote int primary key auto_increment,nombre_lote varchar(250
                   fk_email_usuario varchar(50) not null,
                   fk_id_mercado int not null,
                   activo smallint(1) default 1);
+alter table lote add column dia_notificacion smallint(2) default 0;
+alter table lote add column FkIDFase int default 1;
 alter table lote add constraint rel_tipo_peso_lote foreign key lote(fk_tipo_peso) references tipo_peso(id_tipo_peso);
 alter table lote add constraint rel_email_lote foreign key lote(fk_email_usuario) references usuario(email_usuario);
 alter table lote add constraint rel_mercado_lote foreign key lote(fk_id_mercado) references mercado(id_mercado);
+alter table lote add constraint rel_fase_lote foreign key lote(FkIDFase) references fases(idFase);
+alter table lote add column ultimaNotificacion datetime default now();
 create table insumo_lote(id_insumo_lote int auto_increment primary key,fk_id_lote int not null,fk_id_insumo int not null,
              cantidad int default 0,fecha_ingreso datetime default now());
 alter table insumo_lote add constraint rel_insumo_lote_insumo foreign key insumo_lote(fk_id_insumo) references insumo(id_insumo);
@@ -47,7 +51,78 @@ create table historial_lote(id_historial_lote int auto_increment primary key ,vT
 
 alter table historial_lote add constraint rel_historial_lote_lote foreign key historial_lote(FK_lote) references lote(id_lote);
 
+create table fases (idFase int auto_increment primary key,detalleFase varchar(250) not null,
+                    minValorFase smallint(2) default 0,maxValorFase smallint(2) default 0,estado smallint(2) default 1);
+create table alertas(idAlerta int auto_increment primary key,FK_Lote int not null,isVisto smallint(2) default 0);
+alter table alertas add constraint alerta_lote foreign key alertas(FK_Lote) references lote(id_lote);
+
+create table lote_salida(idLoteSalida int auto_increment primary key,FK_Lote int not null,
+                         FK_Email_Usuario_Salida varchar(50) not null);
+alter table lote_salida add constraint rel_lote_salida_lote foreign key lote_salida(FK_Lote) references lote(id_lote);
+alter table lote_salida add constraint rel_lote_salida_usuario foreign key lote_salida(FK_Email_Usuario_Salida)
+                        references usuario(email_usuario);
+
 -- SQL DEFECTOS
+
+create trigger updateFaseLoteTemperaturaTrigger after insert on historial_lote
+    for each row
+    begin
+        call updateFaseLoteTemperatura(new.FK_lote,new.vTemperatura);
+    end;
+
+create procedure updateFaseLoteTemperatura(in lote_ int,in temperatura decimal(10,2))
+       begin
+           declare idTipoFase int default 0;
+           set idTipoFase = (select FkIDFase from lote where id_lote = lote_);
+           update lote set FkIDFase = (select idFase from fases where temperatura between minValorFase and maxValorFase and estado = 1 and idFase > idTipoFase limit 1) where id_lote = lote_;
+       end;
+
+create definer = root@`%` event creacionAlertas on schedule
+    every '1' DAY
+        starts '2023-06-26 05:00:00'
+    on completion preserve
+    enable
+    do
+    begin
+         delete from alertas;
+
+         insert into alertas (FK_Lote) select table1.id_lote from (select L.id_lote,date(L.fechaIngreso) fechaIngreso,
+                date_add(date(L.ultimaNotificacion),
+                interval L.dia_notificacion DAY) fechaNotification,
+                L.dia_notificacion from lote as L inner join mercado as M on M.id_mercado = L.fk_id_mercado
+                inner join fases as F on L.FkIDFase = F.idFase where L.activo = 1
+                and ISNULL(L.fechaSalida) and ISNULL(L.fechaDespacho) and L.dia_notificacion > 0) as table1
+                where table1.fechaNotification = date(now());
+         update lote set ultimaNotificacion = now();
+     end;
+
+CREATE PROCEDURE addLoteSalida (IN lote_ INT, IN email_ VARCHAR(50))
+BEGIN
+    DECLARE fecha_ DATETIME DEFAULT NOW();
+    DECLARE estado INT DEFAULT 200;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SET estado = 400;
+    END;
+
+    START TRANSACTION;
+
+    UPDATE lote SET fechaSalida = fecha_ WHERE id_lote = lote_;
+    INSERT INTO lote_salida (FK_Lote, FK_Email_Usuario_Salida) VALUES (lote_, email_);
+
+    COMMIT;
+
+    SELECT estado AS estado;
+END;
+
+insert into fases(detalleFase, minValorFase, maxValorFase) VALUES ('Sin Fase',0,0);
+insert into fases(detalleFase, minValorFase, maxValorFase) VALUES ('Fase Mesófila ',15,45);
+insert into fases(detalleFase, minValorFase, maxValorFase) VALUES ('Fase Termófila ',45,70);
+insert into fases(detalleFase, minValorFase, maxValorFase) VALUES ('Fase Mesófila II',40,45);
+insert into fases(detalleFase, minValorFase, maxValorFase) VALUES ('Fase de Maduración',0,40);
+
 insert into usuario(email_usuario, nombres, apellido, cedula, telefono, contrasenia)
             VALUES ('guaman1579@gmail.com','NELSON PATRICIO','YUNGA GUAMAN','0604666982','',MD5('12345678'));
 insert into mercado(nombre_mercado, encargado_mercado, email_mercado, telefono_mercado, dire_mercado) VALUES
@@ -62,4 +137,7 @@ insert into tipo_peso(detalle_tipo_peso) values ('LIBRAS');
 insert into tipo_peso(detalle_tipo_peso) values ('KILOS');
 
 -- CONSULTAS
-select * from usuario;
+
+-- Historial de volteos por (lote, fecha)
+select M.id_mercado,M.nombre_mercado,sum(IF(ISNULL(L.peso),0,L.peso)) Peso,L.fk_tipo_peso
+      from mercado as M left join lote as L on M.id_mercado = L.fk_id_mercado group by M.id_mercado,L.fk_tipo_peso;

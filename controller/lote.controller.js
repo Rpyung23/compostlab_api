@@ -5,8 +5,8 @@ class LoteController
         return await LoteModel.readLoteUserModel(email)
     }
 
-    static async insertLoteUserController(nombre_lote, observacion_lote, peso, fk_tipo_peso,email,fk_id_mercado){
-        return await LoteModel.insertLoteUserModel(nombre_lote, observacion_lote, peso, fk_tipo_peso,email,fk_id_mercado)
+    static async insertLoteUserController(nombre_lote, observacion_lote, peso, fk_tipo_peso,email,fk_id_mercado,dia_notification){
+        return await LoteModel.insertLoteUserModel(nombre_lote, observacion_lote, peso, fk_tipo_peso,email,fk_id_mercado,dia_notification)
     }
 
     static async sendLoteDespachoController(idLote){
@@ -23,6 +23,22 @@ class LoteController
 
     static async readLoteDespachoUserController(email){
         return await LoteModel.readLoteDespachoUserModel(email)
+    }
+
+    static async authLoteController(idLote,email){
+        return await LoteModel.authLoteModel(idLote,email)
+    }
+
+    static async readLoteAllUserController(email){
+        return await LoteModel.readLoteAllUserModel(email)
+    }
+
+    static async readReportInsumosLoteController(lotes,email){
+        return await LoteModel.readReportInsumosLoteModel(lotes,email)
+    }
+
+    static async readReportSalidasLoteController(lotes,email,fechaI,fechaF){
+        return await LoteModel.readReportSalidasLoteModel(lotes,email,fechaI,fechaF)
     }
 }
 

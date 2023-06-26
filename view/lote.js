@@ -2,6 +2,28 @@ const express = require("express")
 const app = express()
 const LoteController = require("../controller/lote.controller")
 const Jwt = require("../config/jwt")
+
+
+app.post("/lote_all_user",Jwt.veriJwt,async function(req,res)
+{
+    var result = await LoteController.readLoteAllUserController(req.body.decoded.datosJWT.email_usuario)
+
+    try{
+        res.status(200).json({
+            status_code: result.length > 0 ? 200 : 300,
+            msm: result.length > 0 ? 'Lotes encontrados' : 'No existen Lotes',
+            datos: result
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm: e.toString(),
+            datos: []
+        })
+    }
+
+})
+
 app.post("/lote_usuer",Jwt.veriJwt,async function(req,res)
 {
     var result = await LoteController.readLoteUserController(req.body.decoded.datosJWT.email_usuario)
@@ -26,7 +48,7 @@ app.post("/lote_usuer",Jwt.veriJwt,async function(req,res)
 app.post("/add_lote_usuer",Jwt.veriJwt,async function(req,res)
 {
     var result = await LoteController.insertLoteUserController(req.body.nombre_lote,req.body.observacion_lote,req.body.peso,
-        req.body.tipo_peso,req.body.decoded.datosJWT.email_usuario,req.body.id_mercado)
+        req.body.tipo_peso,req.body.decoded.datosJWT.email_usuario,req.body.id_mercado,req.body.dia_notification)
 
     try{
         res.status(200).json({
@@ -121,5 +143,68 @@ app.post("/despacho_lote_usuer",Jwt.veriJwt,async function(req,res)
     }
 
 })
+
+
+app.post("/authLoteSalida",Jwt.veriJwt,async function(req,res)
+{
+
+    var result = await LoteController.authLoteController(req.body.lote,req.body.decoded.datosJWT.email_usuario)
+
+    try{
+        res.status(200).json({
+            status_code: result,
+            msm: result == 200  ? 'Salida Autorizada' : 'No se pudo enviar autorizar la salida',
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm: e.toString()
+        })
+    }
+})
+
+app.post("/insumos_lotes_all",Jwt.veriJwt,async function(req,res)
+{
+    var result = await LoteController.readReportInsumosLoteController(req.body.lotes,req.body.decoded.datosJWT.email_usuario)
+
+    try{
+        res.status(200).json({
+            status_code: result.length > 0 ? 200 : 300,
+            msm: result.length > 0 ? 'Lotes encontrados' : 'No existen Lotes',
+            datos: result
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm: e.toString(),
+            datos: []
+        })
+    }
+
+})
+
+
+
+app.post("/Rhistorial_lotes_all",Jwt.veriJwt,async function(req,res)
+{
+    var result = await LoteController.readReportSalidasLoteController(req.body.lotes,req.body.decoded.datosJWT.email_usuario,
+        req.body.fechaI,req.body.fechaF)
+
+    try{
+        res.status(200).json({
+            status_code: result.length > 0 ? 200 : 300,
+            msm: result.length > 0 ? 'Lotes encontrados' : 'No existen Lotes',
+            datos: result
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm: e.toString(),
+            datos: []
+        })
+    }
+
+})
+
 
 module.exports = app
