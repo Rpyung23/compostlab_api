@@ -8,6 +8,12 @@ class InsumoController
             cantidad_insumo, precio_insumo, decrip_insumo)
     }
 
+    static async updateInsumoController(id_insumo,nombre_insumo, origin_insumo, id_tipo_insumo,
+                                   cantidad_insumo, precio_insumo, decrip_insumo){
+        return await InsumoModel.updateInsumoModel(id_insumo,nombre_insumo, origin_insumo, id_tipo_insumo,
+            cantidad_insumo, precio_insumo, decrip_insumo)
+    }
+
     static async readAllInsumosController(){
         return await InsumoModel.readAllInsumoModel()
     }

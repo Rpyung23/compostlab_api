@@ -2,6 +2,22 @@ const  connDB = require("../config/conn")
 class LoteModel
 {
 
+    static async updateLoteModel(id_lote,nombre_lote, observacion_lote, peso, fk_tipo_peso,
+                                      fk_id_mercado,dia_notification,estado){
+        try{
+            var conn = await connDB().promise()
+            await conn.query("update lote set nombre_lote = '"+nombre_lote+"',peso = "+peso+",fk_tipo_peso ="+fk_tipo_peso+"," +
+                "fk_id_mercado = "+fk_id_mercado+",dia_notificacion = "+dia_notification+"," +
+                "observacion_lote = '"+observacion_lote+"',activo = "+estado+" where id_lote = "+id_lote)
+            await conn.end()
+            return true
+        }catch (e) {
+            console.log(e)
+            return false
+        }
+    }
+
+
     static async readLoteAllUserModel(email)
     {
         try{

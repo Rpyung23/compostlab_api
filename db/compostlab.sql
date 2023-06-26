@@ -137,7 +137,5 @@ insert into tipo_peso(detalle_tipo_peso) values ('LIBRAS');
 insert into tipo_peso(detalle_tipo_peso) values ('KILOS');
 
 -- CONSULTAS
-
--- Historial de volteos por (lote, fecha)
-select M.id_mercado,M.nombre_mercado,sum(IF(ISNULL(L.peso),0,L.peso)) Peso,L.fk_tipo_peso
-      from mercado as M left join lote as L on M.id_mercado = L.fk_id_mercado group by M.id_mercado,L.fk_tipo_peso;
+use compostlab;
+select * from lote;

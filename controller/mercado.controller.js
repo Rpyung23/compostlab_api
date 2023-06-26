@@ -13,6 +13,16 @@ class MercadoController
         return await MercadoModel.createMercadoModel(nombre_mercado, encargado_mercado, email_mercado, telefono_mercado, dire_mercado)
     }
 
+
+    static async readCompostMercadoReportController(mercados){
+        return await MercadoModel.readCompostMercadoReportModel(mercados)
+    }
+
+
+    static async updateMercadoController(id_mercado,nombre_mercado, encargado_mercado, email_mercado, telefono_mercado, dire_mercado,estado){
+       return await MercadoModel.updateMercadoModel(id_mercado,nombre_mercado, encargado_mercado, email_mercado, telefono_mercado, dire_mercado,estado)
+    }
+
 }
 
 module.exports = MercadoController

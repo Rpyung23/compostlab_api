@@ -22,6 +22,25 @@ app.post("/create_insumo",async function (req, res)
     }
 })
 
+app.put("/update_insumo",async function (req, res)
+{
+    var result = await InsumoController.updateInsumoController(req.body.id_insumo,req.body.nombre_insumo,
+        req.body.origin_insumo, req.body.id_tipo_insumo, req.body.cantidad_insumo,
+        req.body.precio_insumo,req.body.decrip_insumo);
+
+    try{
+        res.status(200).json({
+            status_code: result ? 200 : 300,
+            msm: result ? 'Insumo actualizado con éxito' : 'No se ha podido actualizar el Insumo'
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm: e.toString()
+        })
+    }
+})
+
 app.get("/all_insumos",async function (req, res)
 {
     var result = await InsumoController.readAllInsumosController();

@@ -1,6 +1,25 @@
 const  connDB = require("../config/conn")
 class InsumoModel
 {
+
+    static async updateInsumoModel(id_insumo,nombre_insumo, origin_insumo, id_tipo_insumo,
+                                   cantidad_insumo, precio_insumo, decrip_insumo)
+    {
+        try {
+            var conn = await connDB().promise()
+            var sql = "update insumo set nombre_insumo = '"+nombre_insumo+"',origin_insumo = '"+origin_insumo+"'," +
+                "cantidad_insumo = "+cantidad_insumo+",fk_id_tipo_insumo = "+id_tipo_insumo+"," +
+                "precio_insumo = "+precio_insumo+",decrip_insumo = '"+decrip_insumo+"' where id_insumo = "+id_insumo
+            await conn.query(sql)
+            await conn.end()
+            return true
+        }catch (e) {
+            console.log(e)
+            return false
+        }
+    }
+
+
     static async createInsumoModel(nombre_insumo, origin_insumo, id_tipo_insumo,
                                    cantidad_insumo, precio_insumo, decrip_insumo)
     {

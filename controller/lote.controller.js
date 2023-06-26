@@ -1,6 +1,12 @@
 const LoteModel =  require("../model/lote.model")
 class LoteController
 {
+    static async updateLoteController(id_lote,nombre_lote, observacion_lote, peso, fk_tipo_peso,
+                                      fk_id_mercado,dia_notification,estado)
+    {
+        return await LoteModel.updateLoteModel(id_lote,nombre_lote, observacion_lote, peso, fk_tipo_peso,
+            fk_id_mercado,dia_notification,estado)
+    }
     static async readLoteUserController(email){
         return await LoteModel.readLoteUserModel(email)
     }

@@ -4,6 +4,26 @@ const LoteController = require("../controller/lote.controller")
 const Jwt = require("../config/jwt")
 
 
+app.put("/update_lote",Jwt.veriJwt,async function(req,res)
+{
+    var result = await LoteController.updateLoteController(req.body.id_lote,req.body.nombre_lote,
+        req.body.observacion_lote,req.body.peso, req.body.tipo_peso,
+        req.body.id_mercado,req.body.dia_notification,req.body.estado)
+
+    try{
+        res.status(200).json({
+            status_code: result > 0 ? 200 : 300,
+            msm: result > 0 ? 'Lote actualizado' : 'No se pudo actualizar el Lote',
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm: e.toString()
+        })
+    }
+
+})
+
 app.post("/lote_all_user",Jwt.veriJwt,async function(req,res)
 {
     var result = await LoteController.readLoteAllUserController(req.body.decoded.datosJWT.email_usuario)
