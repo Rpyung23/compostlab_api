@@ -138,4 +138,4 @@ insert into tipo_peso(detalle_tipo_peso) values ('KILOS');
 
 -- CONSULTAS
 use compostlab;
-select * from lote;
+select * from alertas;
