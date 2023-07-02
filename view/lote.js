@@ -227,4 +227,25 @@ app.post("/Rhistorial_lotes_all",Jwt.veriJwt,async function(req,res)
 })
 
 
+app.post("/RSalidasLote",Jwt.veriJwt,async function(req,res)
+{
+    var result = await LoteController.readReporteSalidasLoteController(req.body.mercados,req.body.fechaI,req.body.fechaF)
+
+    try{
+        res.status(200).json({
+            status_code: result.length > 0 ? 200 : 300,
+            msm: result.length > 0 ? 'Lotes encontrados' : 'No existen Lotes',
+            datos: result
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm: e.toString(),
+            datos: []
+        })
+    }
+
+})
+
+
 module.exports = app

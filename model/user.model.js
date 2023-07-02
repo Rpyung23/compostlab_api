@@ -21,7 +21,9 @@ class UserModel
             var conn = await connDB().promise()
             var sql = "select U.email_usuario,concat(U.nombres,' ',U.apellido) NombresApellidos," +
                 "U.activeMercado,U.activeLote,U.activeHistorial,U.activeDespacho,U.activeReporte," +
-                "U.activeNotificacion,U.activeRecordatorio,U.activeUsuarios,U.activeInsumo from usuario as U where " +
+                "U.activeNotificacion,U.activeRecordatorio,U.activeUsuarios,U.activeInsumo," +
+                "U.active_options_mercado,U.active_options_insumo,U.active_options_lote," +
+                "U.active_options_historial_lote,U.active_options_despacho from usuario as U where " +
                 "U.email_usuario = '"+email+"' and U.contrasenia = MD5('"+password+"') and U.estado = 1"
             var datos = await conn.query(sql)
             await conn.end()
@@ -34,7 +36,8 @@ class UserModel
     static async readAllUsuarioModel(){
         try {
             var conn = await connDB().promise()
-            var sql = "select U.email_usuario,U.nombres,U.apellido,U.cedula,U.telefono,U.estado,activeMercado, activeLote, activeHistorial, activeDespacho, activeReporte, activeNotificacion, activeRecordatorio, activeUsuarios from usuario as U"
+            var sql = "select U.email_usuario,U.nombres,U.apellido,U.cedula,U.telefono,U.estado,activeMercado, activeInsumo," +
+                "activeLote, activeHistorial, activeDespacho, activeReporte, activeNotificacion, activeRecordatorio, activeUsuarios,active_options_mercado,active_options_insumo,active_options_lote,active_options_historial_lote,active_options_despacho from usuario as U"
             var datos = await conn.query(sql)
             await conn.end()
             return datos[0]
@@ -69,7 +72,10 @@ class UserModel
     }
 
     static async updatePermisosUsuarioModel(activeMercado,activeLote, activeHistorial, activeDespacho,
-                                     activeReporte, activeNotificacion, activeRecordatorio, activeUsuarios,activeInsumo,email)
+                                     activeReporte, activeNotificacion, activeRecordatorio, activeUsuarios,
+                                            activeInsumo,email,btn_tabla_mercados,btn_tabla_lotes,
+                                            btn_tabla_insumos,btn_tabla_h_lotes,
+                                            btn_tabla_despacho)
     {
         try {
             var conn = await connDB().promise()
@@ -77,7 +83,12 @@ class UserModel
                 "activeHistorial = "+activeHistorial+",activeDespacho = "+activeDespacho+"," +
                 "activeReporte = "+activeReporte+", activeNotificacion = "+activeNotificacion+", " +
                 "activeRecordatorio = "+activeRecordatorio+",activeUsuarios = "+activeUsuarios+"," +
-                "activeInsumo = "+activeInsumo+" where email_usuario = '"+email+"'")
+                "activeInsumo = "+activeInsumo+"," +
+                "active_options_mercado = "+btn_tabla_mercados+"," +
+                "active_options_insumo = "+btn_tabla_insumos+"," +
+                "active_options_lote = "+btn_tabla_lotes+"," +
+                "active_options_historial_lote = "+btn_tabla_h_lotes+"," +
+                "active_options_despacho = "+btn_tabla_despacho+" where email_usuario = '"+email+"'")
             await conn.end()
             return true
         }catch (e) {

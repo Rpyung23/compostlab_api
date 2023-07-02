@@ -214,6 +214,37 @@ class LoteModel
         }
     }
 
+    static async readReporteSalidasLoteModel(mercado,fechaI,fechaF)
+    {
+        var oSqlFechas = ""
+        var oSqlMercado = ""
+
+
+        if(Array.isArray(mercado)){
+            oSqlMercado = " and L.fk_id_mercado in ("+mercado+") "
+        }
+
+        if(fechaI != null && fechaF != null){
+            oSqlFechas = " and date(L.fechaSalida) between '"+fechaI+"' and '"+fechaF+"'"
+        }
+
+        try {
+            var sql = "select L.nombre_lote,L.peso,TP.detalle_tipo_peso,M.nombre_mercado," +
+                "convert(L.fechaIngreso,char(150)) fechaIngreso,convert(L.fechaDespacho,char(150)) fechaDespacho," +
+                "convert(L.fechaSalida,char(150)) fechaSalida,concat(U.nombres,' ',U.apellido) UserSalida " +
+                "from lote as L inner join lote_salida as LS on LS.FK_Lote = L.id_lote " +
+                "inner join mercado as M on L.fk_id_mercado = M.id_mercado " +
+                "inner join usuario as U on U.email_usuario = LS.FK_Email_Usuario_Salida " +
+                "inner join tipo_peso as TP on L.fk_tipo_peso = TP.id_tipo_peso where !ISNULL(L.fechaSalida) "+oSqlFechas+oSqlMercado
+            var conn = await connDB().promise()
+            var datos = await conn.query(sql)
+            await conn.end()
+            return datos[0]
+        }catch (e) {
+            console.log(e)
+        }
+        return []
+    }
 
 }
 

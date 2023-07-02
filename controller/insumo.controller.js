@@ -2,16 +2,16 @@ const InsumoModel = require("../model/insumo.model")
 class InsumoController
 {
     static async createInsumoController(nombre_insumo, origin_insumo, id_tipo_insumo,
-                                   cantidad_insumo, precio_insumo, decrip_insumo)
+                                   cantidad_insumo, precio_insumo, decrip_insumo,tipo_peso)
     {
         return await InsumoModel.createInsumoModel(nombre_insumo, origin_insumo, id_tipo_insumo,
-            cantidad_insumo, precio_insumo, decrip_insumo)
+            cantidad_insumo, precio_insumo, decrip_insumo,tipo_peso)
     }
 
     static async updateInsumoController(id_insumo,nombre_insumo, origin_insumo, id_tipo_insumo,
-                                   cantidad_insumo, precio_insumo, decrip_insumo){
+                                   cantidad_insumo, precio_insumo, decrip_insumo,tipo_peso){
         return await InsumoModel.updateInsumoModel(id_insumo,nombre_insumo, origin_insumo, id_tipo_insumo,
-            cantidad_insumo, precio_insumo, decrip_insumo)
+            cantidad_insumo, precio_insumo, decrip_insumo,tipo_peso)
     }
 
     static async readAllInsumosController(){

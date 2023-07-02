@@ -3,13 +3,14 @@ class InsumoModel
 {
 
     static async updateInsumoModel(id_insumo,nombre_insumo, origin_insumo, id_tipo_insumo,
-                                   cantidad_insumo, precio_insumo, decrip_insumo)
+                                   cantidad_insumo, precio_insumo, decrip_insumo,tipo_peso)
     {
         try {
             var conn = await connDB().promise()
-            var sql = "update insumo set nombre_insumo = '"+nombre_insumo+"',origin_insumo = '"+origin_insumo+"'," +
+            var sql = "update insumo set fk_tipo_peso = "+tipo_peso+",nombre_insumo = '"+nombre_insumo+"',origin_insumo = '"+origin_insumo+"'," +
                 "cantidad_insumo = "+cantidad_insumo+",fk_id_tipo_insumo = "+id_tipo_insumo+"," +
                 "precio_insumo = "+precio_insumo+",decrip_insumo = '"+decrip_insumo+"' where id_insumo = "+id_insumo
+            console.log(sql)
             await conn.query(sql)
             await conn.end()
             return true
@@ -21,14 +22,14 @@ class InsumoModel
 
 
     static async createInsumoModel(nombre_insumo, origin_insumo, id_tipo_insumo,
-                                   cantidad_insumo, precio_insumo, decrip_insumo)
+                                   cantidad_insumo, precio_insumo, decrip_insumo,tipo_peso)
     {
         try {
             var conn = await connDB().promise()
             var sql = "insert into insumo(nombre_insumo, origin_insumo, fk_id_tipo_insumo, " +
-                "cantidad_insumo, precio_insumo, decrip_insumo) VALUES " +
+                "cantidad_insumo, precio_insumo, decrip_insumo,fk_tipo_peso) VALUES " +
                 "('"+nombre_insumo+"','"+origin_insumo+"',"+id_tipo_insumo+","+cantidad_insumo+"," +
-                ""+precio_insumo+",'"+decrip_insumo+"')"
+                ""+precio_insumo+",'"+decrip_insumo+"',"+tipo_peso+")"
             await conn.query(sql)
             await conn.end()
             return true
@@ -41,7 +42,8 @@ class InsumoModel
     static async readAllInsumoModel(){
         try {
             var conn = await connDB().promise()
-            var datos = await conn.query("select I.*,TI.nombreTipoInsumo from insumo as I inner join tipo_insumo as TI on I.fk_id_tipo_insumo = TI.id_tipo_insumo")
+            var datos = await conn.query("select I.*,TI.nombreTipoInsumo,TP.* from insumo as I " +
+                "inner join tipo_insumo as TI on I.fk_id_tipo_insumo = TI.id_tipo_insumo inner join tipo_peso as TP on fk_tipo_peso = TP.id_tipo_peso")
             await conn.end()
             return datos[0]
         }catch (e) {

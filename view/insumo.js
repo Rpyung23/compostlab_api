@@ -7,7 +7,7 @@ app.post("/create_insumo",async function (req, res)
 {
     var result = await InsumoController.createInsumoController(req.body.nombre_insumo,
         req.body.origin_insumo, req.body.id_tipo_insumo, req.body.cantidad_insumo,
-        req.body.precio_insumo,req.body.decrip_insumo);
+        req.body.precio_insumo,req.body.decrip_insumo,req.body.tipo_peso);
 
     try{
         res.status(200).json({
@@ -26,7 +26,7 @@ app.put("/update_insumo",async function (req, res)
 {
     var result = await InsumoController.updateInsumoController(req.body.id_insumo,req.body.nombre_insumo,
         req.body.origin_insumo, req.body.id_tipo_insumo, req.body.cantidad_insumo,
-        req.body.precio_insumo,req.body.decrip_insumo);
+        req.body.precio_insumo,req.body.decrip_insumo,req.body.tipo_peso);
 
     try{
         res.status(200).json({

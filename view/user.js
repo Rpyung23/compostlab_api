@@ -101,10 +101,15 @@ app.put("/update_info_usuario",Jwt.veriJwt,async function(req,res)
 app.put("/update_permisos_usuario",Jwt.veriJwt,async function(req,res)
 {
 
-    var result = await UserController.updatePermisosUsuarioModel(req.body.activeMercado,req.body.activeLote,
+    var result = await UserController.updatePermisosUsuarioController(req.body.activeMercado,req.body.activeLote,
         req.body.activeHistorial, req.body.activeDespacho,
         req.body.activeReporte, req.body.activeNotificacion,
-        req.body.activeRecordatorio, req.body.activeUsuarios,req.body.activeInsumo,req.body.email)
+        req.body.activeRecordatorio, req.body.activeUsuarios,req.body.activeInsumo,req.body.email,
+        req.body.btn_tabla_mercados,
+        req.body.btn_tabla_lotes,
+        req.body.btn_tabla_insumos,
+        req.body.btn_tabla_h_lotes,
+        req.body.btn_tabla_despacho)
 
     try{
         res.status(200).json({
