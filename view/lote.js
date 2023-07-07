@@ -248,4 +248,25 @@ app.post("/RSalidasLote",Jwt.veriJwt,async function(req,res)
 })
 
 
+
+app.delete("/deleteItemHistorialLote",Jwt.veriJwt,async function(req,res)
+{
+    //console.log(req.body)
+    try{
+
+        var data = await LoteController.deleteItemHistorialLoteController(req.body.itemHLote)
+
+        res.status(200).json({
+            status_code: data ? 200 : 400,
+            msm: data ? 'Item eliminado con éxito' : 'Erro al eliminar item'
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm:e.toString()
+        })
+    }
+})
+
+
 module.exports = app

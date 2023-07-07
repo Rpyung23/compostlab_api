@@ -50,6 +50,10 @@ class LoteController
     static async readReporteSalidasLoteController(mercado,fechaI,fechaF){
         return await LoteModel.readReporteSalidasLoteModel(mercado,fechaI,fechaF)
     }
+
+    static async deleteItemHistorialLoteController(idHistorialLote){
+        return await LoteModel.deleteItemHistorialLoteModel(idHistorialLote)
+    }
 }
 
 module.exports = LoteController

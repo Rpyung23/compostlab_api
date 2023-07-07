@@ -102,7 +102,7 @@ class LoteModel
     static async readHistorialDetalleLoteModel(lote)
     {
         try{
-            var sql = "select HL.vTemperatura,HL.vHumedad,HL.vPh,HL.vOxigeno,HL.detalleHistorial," +
+            var sql = "select HL.id_historial_lote,HL.vTemperatura,HL.vHumedad,HL.vPh,HL.vOxigeno,HL.detalleHistorial," +
                 "convert(HL.fechaHistorial,char(150)) fechaHistorial from historial_lote as HL where HL.FK_lote = "+lote
             var conn = await connDB().promise()
             var datos = await conn.query(sql)
@@ -244,6 +244,20 @@ class LoteModel
             console.log(e)
         }
         return []
+    }
+
+
+    static async deleteItemHistorialLoteModel(idHistorialLote)
+    {
+        try {
+            var conn = await connDB().promise()
+            await conn.query("delete from historial_lote where  id_historial_lote = "+idHistorialLote)
+            await conn.end()
+            return true
+        }catch (e) {
+            console.log(e)
+            return false
+        }
     }
 
 }

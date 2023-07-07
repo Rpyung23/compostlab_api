@@ -7,7 +7,7 @@ let connDB = () =>
         host: "159.223.111.107",
         user: "root",
         database: "compostlab",
-        password: "Urbano1972102030*",
+        password: "Pum@15001232023*",
         port: 3306
     });
 
