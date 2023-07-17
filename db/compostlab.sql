@@ -138,16 +138,7 @@ insert into tipo_peso(detalle_tipo_peso) values ('KILOS');
 
 -- CONSULTAS
 use compostlab;
-select * from lote;
-update lote set FkIDFase = 1 where isnull(FkIDFase);
-
-
-
-
-
-
-
-
+select * from fases;
 
 
 

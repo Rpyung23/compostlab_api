@@ -8,8 +8,8 @@ app.put("/update_lote",Jwt.veriJwt,async function(req,res)
 {
     var result = await LoteController.updateLoteController(req.body.id_lote,req.body.nombre_lote,
         req.body.observacion_lote,req.body.peso, req.body.tipo_peso,
-        req.body.id_mercado,req.body.dia_notification,req.body.estado)
-
+        req.body.id_mercado,req.body.dia_notification,req.body.estado,req.body.residuo)
+    //console.log(req.body)
     try{
         res.status(200).json({
             status_code: result > 0 ? 200 : 300,
@@ -68,7 +68,8 @@ app.post("/lote_usuer",Jwt.veriJwt,async function(req,res)
 app.post("/add_lote_usuer",Jwt.veriJwt,async function(req,res)
 {
     var result = await LoteController.insertLoteUserController(req.body.nombre_lote,req.body.observacion_lote,req.body.peso,
-        req.body.tipo_peso,req.body.decoded.datosJWT.email_usuario,req.body.id_mercado,req.body.dia_notification)
+        req.body.tipo_peso,req.body.decoded.datosJWT.email_usuario,req.body.id_mercado,req.body.dia_notification,
+        req.body.residuo)
 
     try{
         res.status(200).json({
@@ -168,7 +169,11 @@ app.post("/despacho_lote_usuer",Jwt.veriJwt,async function(req,res)
 app.post("/authLoteSalida",Jwt.veriJwt,async function(req,res)
 {
 
-    var result = await LoteController.authLoteController(req.body.lote,req.body.decoded.datosJWT.email_usuario)
+    var result = await LoteController.authLoteController(req.body.lote,
+        req.body.decoded.datosJWT.email_usuario,
+        req.body.destinoSalida,
+        req.body.correoSalida,
+        req.body.telefonoSalida)
 
     try{
         res.status(200).json({

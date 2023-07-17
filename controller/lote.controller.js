@@ -2,17 +2,17 @@ const LoteModel =  require("../model/lote.model")
 class LoteController
 {
     static async updateLoteController(id_lote,nombre_lote, observacion_lote, peso, fk_tipo_peso,
-                                      fk_id_mercado,dia_notification,estado)
+                                      fk_id_mercado,dia_notification,estado,residuo)
     {
         return await LoteModel.updateLoteModel(id_lote,nombre_lote, observacion_lote, peso, fk_tipo_peso,
-            fk_id_mercado,dia_notification,estado)
+            fk_id_mercado,dia_notification,estado,residuo)
     }
     static async readLoteUserController(email){
         return await LoteModel.readLoteUserModel(email)
     }
 
-    static async insertLoteUserController(nombre_lote, observacion_lote, peso, fk_tipo_peso,email,fk_id_mercado,dia_notification){
-        return await LoteModel.insertLoteUserModel(nombre_lote, observacion_lote, peso, fk_tipo_peso,email,fk_id_mercado,dia_notification)
+    static async insertLoteUserController(nombre_lote, observacion_lote, peso, fk_tipo_peso,email,fk_id_mercado,dia_notification,residuo){
+        return await LoteModel.insertLoteUserModel(nombre_lote, observacion_lote, peso, fk_tipo_peso,email,fk_id_mercado,dia_notification,residuo)
     }
 
     static async sendLoteDespachoController(idLote){
@@ -31,8 +31,8 @@ class LoteController
         return await LoteModel.readLoteDespachoUserModel(email)
     }
 
-    static async authLoteController(idLote,email){
-        return await LoteModel.authLoteModel(idLote,email)
+    static async authLoteController(idLote,email,destinoSalida,correoSalida,telefonoSalida){
+        return await LoteModel.authLoteModel(idLote,email,destinoSalida,correoSalida,telefonoSalida)
     }
 
     static async readLoteAllUserController(email){

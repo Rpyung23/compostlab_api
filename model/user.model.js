@@ -1,17 +1,39 @@
 const  connDB = require("../config/conn")
 class UserModel
 {
-    static async createUsuarioModel(email_usuario, nombres, apellido, cedula, telefono, contrasenia)
-    {
+    static async checkEmail(email){
         try {
             var conn = await connDB().promise()
-            var sql = "insert into usuario(email_usuario, nombres, apellido, cedula, telefono, contrasenia) " +
-                "VALUES ('"+email_usuario+"','"+nombres+"','"+apellido+"','"+cedula+"','"+telefono+"',MD5('"+contrasenia+"'))"
-            await conn.query(sql)
+            var sql = "select count(*) bandera from usuario where email_usuario = '"+email+"'"
+            var datos = await conn.query(sql)
             await conn.end()
-            return true
+            //console.log(datos[0][0])
+            if(datos[0][0].bandera > 0){
+                return true
+            }else{
+                return false
+            }
         }catch (e) {
             return false
+        }
+    }
+    static async createUsuarioModel(email_usuario, nombres, apellido, cedula, telefono, contrasenia)
+    {
+        if(await this.checkEmail(email_usuario) == false)
+        {
+            // EMAIL DISPONIBLE
+            try {
+                var conn = await connDB().promise()
+                var sql = "insert into usuario(email_usuario, nombres, apellido, cedula, telefono, contrasenia) " +
+                    "VALUES ('"+email_usuario+"','"+nombres+"','"+apellido+"','"+cedula+"','"+telefono+"',MD5('"+contrasenia+"'))"
+                await conn.query(sql)
+                await conn.end()
+                return 200
+            }catch (e) {
+                return 400
+            }
+        }else{
+            return 300
         }
     }
 

@@ -3,12 +3,12 @@ class LoteModel
 {
 
     static async updateLoteModel(id_lote,nombre_lote, observacion_lote, peso, fk_tipo_peso,
-                                      fk_id_mercado,dia_notification,estado){
+                                      fk_id_mercado,dia_notification,estado,residuo){
         try{
             var conn = await connDB().promise()
             await conn.query("update lote set nombre_lote = '"+nombre_lote+"',peso = "+peso+",fk_tipo_peso ="+fk_tipo_peso+"," +
                 "fk_id_mercado = "+fk_id_mercado+",dia_notificacion = "+dia_notification+"," +
-                "observacion_lote = '"+observacion_lote+"',activo = "+estado+" where id_lote = "+id_lote)
+                "observacion_lote = '"+observacion_lote+"',activo = "+estado+",fk_id_residuo = "+residuo+" where id_lote = "+id_lote)
             await conn.end()
             return true
         }catch (e) {
@@ -22,8 +22,9 @@ class LoteModel
     {
         try{
             var conn = await connDB().promise()
-            var sql = "select L.id_lote,L.nombre_lote from lote as L where L.activo = 1 " +
-                "and L.fk_email_usuario = '"+email+"';"
+            /*var sql = "select L.id_lote,L.nombre_lote from lote as L where L.activo = 1 " +
+                "and L.fk_email_usuario = '"+email+"';"*/
+            var sql = "select L.id_lote,L.nombre_lote from lote as L where L.activo = 1 "
             //console.log(sql)
             var datos = await conn.query(sql)
             await conn.end()
@@ -37,13 +38,23 @@ class LoteModel
     {
         try{
             var conn = await connDB().promise()
-            var sql = "select L.dia_notificacion,L.FkIDFase,F.detalleFase,L.id_lote,L.nombre_lote,convert(L.fechaIngreso,char(150)) fechaIngreso,L.observacion_lote,L.peso,TP.*,U.email_usuario," +
+            /*var sql = "select R.detalle_residuo,R.id_residuo,L.dia_notificacion,L.FkIDFase,F.detalleFase,L.id_lote,L.nombre_lote,convert(L.fechaIngreso,char(150)) fechaIngreso,L.observacion_lote,L.peso,TP.*,U.email_usuario," +
                 "M.id_mercado,M.nombre_mercado,concat(U.nombres,' ',U.apellido) UsuarioNombres from lote as L " +
                 "inner join usuario as U on L.fk_email_usuario = U.email_usuario " +
                 "inner join tipo_peso as TP on L.fk_tipo_peso = TP.id_tipo_peso " +
                 "inner join mercado as M on L.fk_id_mercado = M.id_mercado " +
-                "inner join fases as F on F.idFase = L.FkIDFase where ISNULL(L.fechaDespacho) and ISNULL(L.fechaSalida) and L.activo = 1 and " +
-                "L.fk_email_usuario = '"+email+"' order by L.fechaIngreso desc"
+                "inner join fases as F on F.idFase = L.FkIDFase inner join residuo as R on L.fk_id_residuo = R.id_residuo " +
+                "where ISNULL(L.fechaDespacho) and ISNULL(L.fechaSalida) and L.activo = 1 and " +
+                "L.fk_email_usuario = '"+email+"' order by L.fechaIngreso desc"*/
+
+            var sql = "select R.detalle_residuo,R.id_residuo,L.dia_notificacion,L.FkIDFase,F.detalleFase,L.id_lote,L.nombre_lote,convert(L.fechaIngreso,char(150)) fechaIngreso,L.observacion_lote,L.peso,TP.*,U.email_usuario," +
+                "M.id_mercado,M.nombre_mercado,concat(U.nombres,' ',U.apellido) UsuarioNombres from lote as L " +
+                "inner join usuario as U on L.fk_email_usuario = U.email_usuario " +
+                "inner join tipo_peso as TP on L.fk_tipo_peso = TP.id_tipo_peso " +
+                "inner join mercado as M on L.fk_id_mercado = M.id_mercado " +
+                "inner join fases as F on F.idFase = L.FkIDFase inner join residuo as R on L.fk_id_residuo = R.id_residuo " +
+                "where ISNULL(L.fechaDespacho) and ISNULL(L.fechaSalida) and L.activo = 1  order by L.fechaIngreso desc"
+
             //console.log(sql)
             var datos = await conn.query(sql)
             await conn.end()
@@ -54,12 +65,12 @@ class LoteModel
         }
     }
 
-    static async insertLoteUserModel(nombre_lote, observacion_lote, peso, fk_tipo_peso,email,fk_id_mercado,dia_notification){
+    static async insertLoteUserModel(nombre_lote, observacion_lote, peso, fk_tipo_peso,email,fk_id_mercado,dia_notification,residuo){
         try{
             var conn = await connDB().promise()
-            await conn.query("INSERT INTO compostlab.lote ( nombre_lote, observacion_lote, peso, fk_tipo_peso," +
-                "fk_email_usuario, fk_id_mercado,dia_notificacion) VALUES ('"+nombre_lote+"','"+observacion_lote+"', "+peso+", "+fk_tipo_peso+"," +
-                " '"+email+"', "+fk_id_mercado+","+dia_notification+")")
+            await conn.query("INSERT INTO lote ( nombre_lote, observacion_lote, peso, fk_tipo_peso," +
+                "fk_email_usuario, fk_id_mercado,dia_notificacion,fk_id_residuo) VALUES ('"+nombre_lote+"','"+observacion_lote+"', "+peso+", "+fk_tipo_peso+"," +
+                " '"+email+"', "+fk_id_mercado+","+dia_notification+","+residuo+")")
             await conn.end()
             return true
         }catch (e) {
@@ -119,7 +130,7 @@ class LoteModel
     {
         try{
             var conn = await connDB().promise()
-            var sql = "select L.id_lote,L.nombre_lote,convert(L.fechaIngreso,char(150)) fechaIngreso," +
+            /*var sql = "select L.id_lote,L.nombre_lote,convert(L.fechaIngreso,char(150)) fechaIngreso," +
                 "convert(L.fechaDespacho,char(150)) fechaDespacho,L.observacion_lote,L.peso,TP.*," +
                 "U.email_usuario,M.id_mercado,M.nombre_mercado,concat(U.nombres,' ',U.apellido) UsuarioNombres," +
                 "ROUND(avg(HL.vOxigeno),2) vOxigeno,ROUND(AVG(HL.vPh),2) vPh,ROUND(avg(HL.vHumedad),2) vHumedad," +
@@ -128,8 +139,21 @@ class LoteModel
                 "L.fk_tipo_peso = TP.id_tipo_peso left join mercado as M on L.fk_id_mercado = M.id_mercado " +
                 "left join historial_lote as HL on L.id_lote = HL.FK_lote " +
                 "where !ISNULL(L.fechaDespacho) and !ISNULL(L.fechaIngreso) and ISNULL(L.fechaSalida) and L.activo = 1 and " +
-                "L.fk_email_usuario = '"+email+"' group by L.id_lote order by L.fechaIngreso,L.fechaDespacho desc"
+                "L.fk_email_usuario = '"+email+"' group by L.id_lote order by L.fechaIngreso,L.fechaDespacho desc"*/
             //console.log(sql)
+
+            var sql = "select L.id_lote,L.nombre_lote,convert(L.fechaIngreso,char(150)) fechaIngreso," +
+                "convert(L.fechaDespacho,char(150)) fechaDespacho,L.observacion_lote,L.peso,TP.*," +
+                "U.email_usuario,M.id_mercado,M.nombre_mercado,concat(U.nombres,' ',U.apellido) UsuarioNombres," +
+                "ROUND(avg(HL.vOxigeno),2) vOxigeno,ROUND(AVG(HL.vPh),2) vPh,ROUND(avg(HL.vHumedad),2) vHumedad," +
+                "ROUND(AVG(HL.vTemperatura),2) vTemperatura from lote as L left join usuario as U on " +
+                "L.fk_email_usuario = U.email_usuario left join tipo_peso as TP on " +
+                "L.fk_tipo_peso = TP.id_tipo_peso left join mercado as M on L.fk_id_mercado = M.id_mercado " +
+                "left join historial_lote as HL on L.id_lote = HL.FK_lote " +
+                "where !ISNULL(L.fechaDespacho) and !ISNULL(L.fechaIngreso) and ISNULL(L.fechaSalida) and L.activo = 1 " +
+                "group by L.id_lote order by L.fechaIngreso,L.fechaDespacho desc"
+
+
             var datos = await conn.query(sql)
             await conn.end()
             return datos[0]
@@ -140,9 +164,10 @@ class LoteModel
     }
 
     /** AUTH SALIDA **/
-    static async authLoteModel(idLote,email){
+    static async authLoteModel(idLote,email,destinoSalida,correoSalida,telefonoSalida){
         try{
-            var sql = "call addLoteSalida("+idLote+",'"+email+"')"
+            destinoSalida,correoSalida,telefonoSalida
+            var sql = "call addLoteSalida("+idLote+",'"+email+"','"+destinoSalida+"','"+correoSalida+"','"+telefonoSalida+"')"
             var conn = await connDB().promise()
             var datos = await conn.query(sql)
             await conn.end()
@@ -164,12 +189,20 @@ class LoteModel
             oSqlLotes = " and L.id_lote in ("+lotes+")"
         }
 
+        /*var sql = "select L.nombre_lote,M.nombre_mercado,I.nombre_insumo,IL.cantidad," +
+            "convert(IL.fecha_ingreso,char(150)) fecha_ingresoInsumo " +
+            "from lote as L inner join mercado as M on M.id_mercado = L.fk_id_mercado " +
+            "inner join insumo_lote as IL on IL.fk_id_lote = L.id_lote " +
+            "inner join insumo as I on IL.fk_id_insumo = I.id_insumo " +
+            "where L.activo = 1 and L.fk_email_usuario = '"+email+"'"+oSqlLotes*/
+
         var sql = "select L.nombre_lote,M.nombre_mercado,I.nombre_insumo,IL.cantidad," +
             "convert(IL.fecha_ingreso,char(150)) fecha_ingresoInsumo " +
             "from lote as L inner join mercado as M on M.id_mercado = L.fk_id_mercado " +
             "inner join insumo_lote as IL on IL.fk_id_lote = L.id_lote " +
             "inner join insumo as I on IL.fk_id_insumo = I.id_insumo " +
-            "where L.activo = 1 and L.fk_email_usuario = '"+email+"'"+oSqlLotes
+            "where L.activo = 1 "+oSqlLotes
+
         try {
             var conn = await connDB().promise()
             var datos = await conn.query(sql)
@@ -196,11 +229,18 @@ class LoteModel
             oSqlFechas = " and date(HL.fechaHistorial) between '"+fechaI+"' and '"+fechaF+"' "
         }
 
-        var sql = "select L.nombre_lote,M.nombre_mercado,convert(HL.fechaHistorial,char(150)) fechaHistorial," +
+        /*var sql = "select L.nombre_lote,M.nombre_mercado,convert(HL.fechaHistorial,char(150)) fechaHistorial," +
             "HL.vTemperatura,HL.vHumedad,HL.vPh,HL.vOxigeno,HL.detalleHistorial from lote as L " +
             "inner join historial_lote as HL on L.id_lote = HL.FK_lote " +
             "inner join mercado as M on M.id_mercado = L.fk_id_mercado " +
             "where L.activo = 1 and L.fk_email_usuario = '"+email+"' " +oSqlLotes+oSqlFechas+
+            " order by L.fechaIngreso,HL.fechaHistorial asc"*/
+
+        var sql = "select L.nombre_lote,M.nombre_mercado,convert(HL.fechaHistorial,char(150)) fechaHistorial," +
+            "HL.vTemperatura,HL.vHumedad,HL.vPh,HL.vOxigeno,HL.detalleHistorial from lote as L " +
+            "inner join historial_lote as HL on L.id_lote = HL.FK_lote " +
+            "inner join mercado as M on M.id_mercado = L.fk_id_mercado " +
+            "where L.activo = 1 " +oSqlLotes+oSqlFechas+
             " order by L.fechaIngreso,HL.fechaHistorial asc"
 
         try {
@@ -229,13 +269,15 @@ class LoteModel
         }
 
         try {
-            var sql = "select L.nombre_lote,L.peso,TP.detalle_tipo_peso,M.nombre_mercado," +
+            var sql = "select LS.destino,LS.correo_destino,LS.telefono_destino,R.id_residuo,R.detalle_residuo,L.nombre_lote,L.peso,TP.detalle_tipo_peso,M.nombre_mercado," +
                 "convert(L.fechaIngreso,char(150)) fechaIngreso,convert(L.fechaDespacho,char(150)) fechaDespacho," +
                 "convert(L.fechaSalida,char(150)) fechaSalida,concat(U.nombres,' ',U.apellido) UserSalida " +
                 "from lote as L inner join lote_salida as LS on LS.FK_Lote = L.id_lote " +
                 "inner join mercado as M on L.fk_id_mercado = M.id_mercado " +
                 "inner join usuario as U on U.email_usuario = LS.FK_Email_Usuario_Salida " +
-                "inner join tipo_peso as TP on L.fk_tipo_peso = TP.id_tipo_peso where !ISNULL(L.fechaSalida) "+oSqlFechas+oSqlMercado
+                "inner join tipo_peso as TP on L.fk_tipo_peso = TP.id_tipo_peso " +
+                "inner join residuo as R on R.id_residuo = L.fk_id_residuo " +
+                "where !ISNULL(L.fechaSalida) "+oSqlFechas+oSqlMercado+ " group by L.id_lote"
             var conn = await connDB().promise()
             var datos = await conn.query(sql)
             await conn.end()

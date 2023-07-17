@@ -11,8 +11,8 @@ app.post("/create_user",async function (req, res)
 
     try{
         res.status(200).json({
-            status_code: result ? 200 : 300,
-            msm: result ? 'Usuario creado con éxito' : 'No se ha podido crear el usuario'
+            status_code: result,
+            msm: result == 400 ? "ERROR EN MYSQL INSERT" : result == 200 ? 'Usuario creado con éxito' : 'EMAIL NO DISPONIBLE'
         })
     }catch (e) {
         res.status(200).json({

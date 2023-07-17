@@ -78,10 +78,11 @@ class InsumoModel
     {
         try {
             var conn = await connDB().promise()
-            var datos = await conn.query("select IL.fk_id_lote,L.nombre_lote,convert(IL.fecha_ingreso,char(150)) fecha_ingreso," +
+            var datos = await conn.query("select TP.detalle_tipo_peso,TP.id_tipo_peso,IL.fk_id_lote,IL.id_insumo_lote," +
+                "L.nombre_lote,convert(IL.fecha_ingreso,char(150)) fecha_ingreso," +
                 "IL.cantidad,IL.fk_id_insumo,I.nombre_insumo from insumo_lote as IL " +
                 "inner join insumo as I on IL.fk_id_insumo = I.id_insumo inner join lote as L on IL.fk_id_lote = L.id_lote " +
-                "where IL.fk_id_lote = "+id_lote)
+                " inner join tipo_peso as TP on IL.fk_id_peso = TP.id_tipo_peso where IL.fk_id_lote = "+id_lote)
             await conn.end()
             return datos[0]
         }catch (e) {
@@ -91,15 +92,28 @@ class InsumoModel
     }
 
 
-    static async addInsumoLoteModel(id_lote,id_insumo,cantidad)
+    static async addInsumoLoteModel(id_lote,id_insumo,cantidad,fk_id_peso)
     {
         try{
             var conn = await connDB().promise()
-            var sql = "insert into insumo_lote(fk_id_lote, fk_id_insumo, cantidad) values ("+id_lote+","+id_insumo+","+cantidad+")"
+            var sql = "insert into insumo_lote(fk_id_lote, fk_id_insumo, cantidad,fk_id_peso) values ("+id_lote+","+id_insumo+","+cantidad+","+fk_id_peso+")"
             await conn.query(sql)
             await conn.end()
             return true
         }catch (e) {
+            return false
+        }
+    }
+
+    static async delteInsumoLoteModel(id_insumo_lote)
+    {
+        try{
+            var conn = connDB().promise()
+            var sql = "delete from insumo_lote where id_insumo_lote = "+id_insumo_lote
+            await conn.query(sql)
+            return true
+        }catch (e) {
+            console.log(e)
             return false
         }
     }

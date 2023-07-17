@@ -123,12 +123,30 @@ app.get("/all_insumo_lote/:id_lote",async function (req, res)
 app.post("/add_insumo_lote",async function (req, res)
 {
     var result = await InsumoController.addInsumoLoteController(req.body.id_lote,
-        req.body.id_insumo, req.body.cantidad);
+        req.body.id_insumo, req.body.cantidad,req.body.fk_id_peso);
 
     try{
         res.status(200).json({
             status_code: result ? 200 : 300,
             msm: result ? 'Insumo agregado con éxito' : 'No se ha podido agregado el Insumo'
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm: e.toString()
+        })
+    }
+})
+
+
+app.delete("/delete_insumo_lote",async function (req, res)
+{
+    var result = await InsumoController.delteInsumoLoteController(req.body.id_insumo_lote)
+
+    try{
+        res.status(200).json({
+            status_code: result ? 200 : 300,
+            msm: result ? 'Insumo eliminado con éxito' : 'No se ha podido eliminar el Insumo'
         })
     }catch (e) {
         res.status(200).json({

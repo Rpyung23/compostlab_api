@@ -30,8 +30,13 @@ class InsumoController
         return await InsumoModel.readInsumoLoteModel(id_lote)
     }
 
-    static async addInsumoLoteController(id_lote,id_insumo,cantidad){
-        return await InsumoModel.addInsumoLoteModel(id_lote,id_insumo,cantidad)
+    static async addInsumoLoteController(id_lote,id_insumo,cantidad,fk_id_peso){
+        return await InsumoModel.addInsumoLoteModel(id_lote,id_insumo,cantidad,fk_id_peso)
+    }
+
+    static async delteInsumoLoteController(id_insumo_lote)
+    {
+        return await InsumoModel.delteInsumoLoteModel(id_insumo_lote)
     }
 }
 
