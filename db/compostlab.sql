@@ -138,10 +138,6 @@ insert into tipo_peso(detalle_tipo_peso) values ('KILOS');
 
 -- CONSULTAS
 use compostlab;
-select * from fases;
-
-
-
-
-
+select * from usuario;
+alter table usuario add column active_estadistico_lote smallint(1) default 1;
 

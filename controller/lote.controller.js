@@ -2,10 +2,10 @@ const LoteModel =  require("../model/lote.model")
 class LoteController
 {
     static async updateLoteController(id_lote,nombre_lote, observacion_lote, peso, fk_tipo_peso,
-                                      fk_id_mercado,dia_notification,estado,residuo)
+                                      fk_id_mercado,dia_notification,estado,residuo,fase)
     {
         return await LoteModel.updateLoteModel(id_lote,nombre_lote, observacion_lote, peso, fk_tipo_peso,
-            fk_id_mercado,dia_notification,estado,residuo)
+            fk_id_mercado,dia_notification,estado,residuo,fase)
     }
     static async readLoteUserController(email){
         return await LoteModel.readLoteUserModel(email)
@@ -19,11 +19,11 @@ class LoteController
         return await LoteModel.sendLoteDespachoModel(idLote)
     }
 
-    static async addHistorialLoteController(vTemperatura, vHumedad, vPh, vOxigeno, detalleHistorial, lote){
-        return await LoteModel.addHistorialLoteModel(vTemperatura, vHumedad, vPh, vOxigeno, detalleHistorial, lote)
+    static async addHistorialLoteController(vTemperatura, vHumedad, vPh, vOxigeno, detalleHistorial, lote,actividad){
+        return await LoteModel.addHistorialLoteModel(vTemperatura, vHumedad, vPh, vOxigeno, detalleHistorial, lote,actividad)
     }
 
-    static async readHistorialDetalleLoteModel(lote){
+    static async readHistorialDetalleLoteController(lote){
         return await LoteModel.readHistorialDetalleLoteModel(lote)
     }
 
@@ -53,6 +53,13 @@ class LoteController
 
     static async deleteItemHistorialLoteController(idHistorialLote){
         return await LoteModel.deleteItemHistorialLoteModel(idHistorialLote)
+    }
+    static async readReportActividadLoteController(lotes){
+        return await LoteModel.readReportActividadLoteModel(lotes)
+    }
+
+    static async readEstadiscicoDetalleLoteController(lote){
+        return await LoteModel.readEstadiscicoDetalleLoteModel(lote)
     }
 }
 

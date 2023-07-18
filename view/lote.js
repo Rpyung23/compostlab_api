@@ -8,7 +8,8 @@ app.put("/update_lote",Jwt.veriJwt,async function(req,res)
 {
     var result = await LoteController.updateLoteController(req.body.id_lote,req.body.nombre_lote,
         req.body.observacion_lote,req.body.peso, req.body.tipo_peso,
-        req.body.id_mercado,req.body.dia_notification,req.body.estado,req.body.residuo)
+        req.body.id_mercado,req.body.dia_notification,req.body.estado,
+        req.body.residuo,req.body.fase)
     //console.log(req.body)
     try{
         res.status(200).json({
@@ -108,7 +109,7 @@ app.put("/sendLoteDespacho",Jwt.veriJwt,async function(req,res)
 app.post("/add_historial_lote",Jwt.veriJwt,async function(req,res)
 {
     var result = await LoteController.addHistorialLoteController(req.body.vTemperatura, req.body.vHumedad,
-        req.body.vPh, req.body.vOxigeno, req.body.detalleHistorial, req.body.lote)
+        req.body.vPh, req.body.vOxigeno, req.body.detalleHistorial, req.body.lote,req.body.actividad)
 
     try{
         res.status(200).json({
@@ -128,7 +129,7 @@ app.get("/readDetalleLote/:lote",async function(req, res)
 {
 
     try{
-        var result = await LoteController.readHistorialDetalleLoteModel(req.params.lote)
+        var result = await LoteController.readHistorialDetalleLoteController(req.params.lote)
         res.status(200).json({
             status_code:result.length > 0 ? 200 :300,
             msm: result.length > 0 ? 'Datos consultados con éxito' : 'No existen datos disponibles',
@@ -273,5 +274,47 @@ app.delete("/deleteItemHistorialLote",Jwt.veriJwt,async function(req,res)
     }
 })
 
+
+app.post("/RActividadLote",Jwt.veriJwt,async function(req,res)
+{
+    var result = await LoteController.readReportActividadLoteController(req.body.mercados)
+
+    try{
+        res.status(200).json({
+            status_code: result.length > 0 ? 200 : 300,
+            msm: result.length > 0 ? 'Lotes encontrados' : 'No existen Lotes',
+            datos: result
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm: e.toString(),
+            datos: []
+        })
+    }
+
+})
+
+
+
+app.get("/readEstadisticoLote/:lote",async function(req, res)
+{
+
+    try{
+        var result = await LoteController.readEstadiscicoDetalleLoteController(req.params.lote)
+        res.status(200).json({
+            status_code:result.length > 0 ? 200 :300,
+            msm: result.length > 0 ? 'Datos consultados con éxito' : 'No existen datos disponibles',
+            datos:  result
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code: 400,
+            msm: e.toString(),
+            datos:  []
+        })
+    }
+
+})
 
 module.exports = app

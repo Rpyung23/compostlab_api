@@ -3,12 +3,12 @@ class LoteModel
 {
 
     static async updateLoteModel(id_lote,nombre_lote, observacion_lote, peso, fk_tipo_peso,
-                                      fk_id_mercado,dia_notification,estado,residuo){
+                                      fk_id_mercado,dia_notification,estado,residuo,fase){
         try{
             var conn = await connDB().promise()
             await conn.query("update lote set nombre_lote = '"+nombre_lote+"',peso = "+peso+",fk_tipo_peso ="+fk_tipo_peso+"," +
                 "fk_id_mercado = "+fk_id_mercado+",dia_notificacion = "+dia_notification+"," +
-                "observacion_lote = '"+observacion_lote+"',activo = "+estado+",fk_id_residuo = "+residuo+" where id_lote = "+id_lote)
+                "observacion_lote = '"+observacion_lote+"',activo = "+estado+",fk_id_residuo = "+residuo+",FkIDFase="+fase+" where id_lote = "+id_lote)
             await conn.end()
             return true
         }catch (e) {
@@ -94,12 +94,12 @@ class LoteModel
     }
 
     /**ADD HISTORIAL LOTE**/
-    static async addHistorialLoteModel(vTemperatura, vHumedad, vPh, vOxigeno, detalleHistorial, lote)
+    static async addHistorialLoteModel(vTemperatura, vHumedad, vPh, vOxigeno, detalleHistorial, lote,actividad)
     {
         try {
             var conn = await connDB().promise()
-            var sql = "insert into historial_lote(vTemperatura, vHumedad, vPh, vOxigeno, detalleHistorial, FK_lote) " +
-                "VALUES ("+vTemperatura+","+vHumedad+","+vPh+","+vOxigeno+",'"+detalleHistorial+"',"+lote+")"
+            var sql = "insert into historial_lote(vTemperatura, vHumedad, vPh, vOxigeno, detalleHistorial, FK_lote,fk_id_actividad) " +
+                "VALUES ("+vTemperatura+","+vHumedad+","+vPh+","+vOxigeno+",'"+detalleHistorial+"',"+lote+","+actividad+")"
             await conn.query(sql)
             await conn.end()
             return true
@@ -113,8 +113,9 @@ class LoteModel
     static async readHistorialDetalleLoteModel(lote)
     {
         try{
-            var sql = "select HL.id_historial_lote,HL.vTemperatura,HL.vHumedad,HL.vPh,HL.vOxigeno,HL.detalleHistorial," +
-                "convert(HL.fechaHistorial,char(150)) fechaHistorial from historial_lote as HL where HL.FK_lote = "+lote
+            var sql = "select A.id_actividad,A.detalle_actividad,HL.id_historial_lote,HL.vTemperatura,HL.vHumedad,HL.vPh,HL.vOxigeno,HL.detalleHistorial," +
+                "convert(HL.fechaHistorial,char(150)) fechaHistorial from historial_lote as HL " +
+                "inner join actividad as A on HL.fk_id_actividad = A.id_actividad where HL.FK_lote = "+lote
             var conn = await connDB().promise()
             var datos = await conn.query(sql)
             await conn.end()
@@ -299,6 +300,55 @@ class LoteModel
         }catch (e) {
             console.log(e)
             return false
+        }
+    }
+
+    static async readReportActividadLoteModel(lotes)
+    {
+        var oSqlLotes = ""
+
+        if(Array.isArray(lotes))
+        {
+            oSqlLotes = " and L.id_lote in ("+lotes+")"
+        }
+
+
+        /*var sql = "select L.nombre_lote,M.nombre_mercado,convert(HL.fechaHistorial,char(150)) fechaHistorial," +
+            "HL.vTemperatura,HL.vHumedad,HL.vPh,HL.vOxigeno,HL.detalleHistorial from lote as L " +
+            "inner join historial_lote as HL on L.id_lote = HL.FK_lote " +
+            "inner join mercado as M on M.id_mercado = L.fk_id_mercado " +
+            "where L.activo = 1 and L.fk_email_usuario = '"+email+"' " +oSqlLotes+oSqlFechas+
+            " order by L.fechaIngreso,HL.fechaHistorial asc"*/
+
+        var sql = "select L.id_lote,L.nombre_lote,M.nombre_mercado,count(HL.fk_id_actividad) contador," +
+            "HL.fk_id_actividad,A.detalle_actividad  from historial_lote as HL " +
+            "inner join lote as L on L.id_lote = HL.FK_lote inner join mercado as M on L.fk_id_mercado = M.id_mercado " +
+            "inner join actividad A on A.id_actividad = HL.fk_id_actividad " +
+            "where L.activo = 1 "+oSqlLotes+" group by HL.fk_id_actividad,L.id_lote;"
+
+        try {
+            var conn = await connDB().promise()
+            var datos = await conn.query(sql)
+            await conn.end()
+            return datos[0]
+        }catch (e) {
+            console.log(e)
+            return []
+        }
+    }
+
+
+    static async readEstadiscicoDetalleLoteModel(lote)
+    {
+        try{
+            var sql = "select convert(date(HL.fechaHistorial),char(150)) as fechaHistorial,HL.vHumedad,HL.vPh,HL.vTemperatura from historial_lote as HL where FK_lote =  "+lote
+            var conn = await connDB().promise()
+            var datos = await conn.query(sql)
+            await conn.end()
+            return datos[0]
+        }catch (e) {
+            console.log(e)
+            return []
         }
     }
 

@@ -109,7 +109,7 @@ app.put("/update_permisos_usuario",Jwt.veriJwt,async function(req,res)
         req.body.btn_tabla_lotes,
         req.body.btn_tabla_insumos,
         req.body.btn_tabla_h_lotes,
-        req.body.btn_tabla_despacho)
+        req.body.btn_tabla_despacho,req.body.active_estadistico_lote)
 
     try{
         res.status(200).json({
