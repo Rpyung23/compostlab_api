@@ -18,6 +18,19 @@ class LoteModel
     }
 
 
+    static async deleteLoteModel(id_lote){
+        try{
+            var conn = await connDB().promise()
+            await conn.query("update lote set activo = 0 where id_lote = "+id_lote)
+            await conn.end()
+            return true
+        }catch (e) {
+            console.log(e)
+            return false
+        }
+    }
+
+
     static async readLoteAllUserModel(email)
     {
         try{
@@ -144,7 +157,7 @@ class LoteModel
                 "L.fk_email_usuario = '"+email+"' group by L.id_lote order by L.fechaIngreso,L.fechaDespacho desc"*/
             //console.log(sql)
 
-            var sql = "select L.id_lote,L.nombre_lote,convert(L.fechaIngreso,char(150)) fechaIngreso," +
+            /*var sql = "select L.id_lote,L.nombre_lote,convert(L.fechaIngreso,char(150)) fechaIngreso," +
                 "convert(L.fechaDespacho,char(150)) fechaDespacho,L.observacion_lote,L.peso,TP.*," +
                 "U.email_usuario,M.id_mercado,M.nombre_mercado,concat(U.nombres,' ',U.apellido) UsuarioNombres," +
                 "ROUND(avg(HL.vOxigeno),2) vOxigeno,ROUND(AVG(HL.vPh),2) vPh,ROUND(avg(HL.vHumedad),2) vHumedad," +
@@ -153,8 +166,17 @@ class LoteModel
                 "L.fk_tipo_peso = TP.id_tipo_peso left join mercado as M on L.fk_id_mercado = M.id_mercado " +
                 "left join historial_lote as HL on L.id_lote = HL.FK_lote " +
                 "where !ISNULL(L.fechaIngreso) and ISNULL(L.fechaSalida) and L.activo = 1 " +
-                "group by L.id_lote order by L.fechaIngreso,L.fechaDespacho desc"
+                "group by L.id_lote order by L.fechaIngreso,L.fechaDespacho desc"*/
 
+            var sql = "select table1.*,LS.destino,LS.telefono_destino,LS.correo_destino from (select L.id_lote,L.nombre_lote," +
+                "convert(L.fechaIngreso,char(150)) fechaIngreso,convert(L.fechaDespacho,char(150)) fechaDespacho," +
+                "L.observacion_lote,L.peso,TP.*,U.email_usuario,M.id_mercado,M.nombre_mercado,concat(U.nombres,' ',U.apellido) UsuarioNombres," +
+                "ROUND(avg(HL.vOxigeno),2) vOxigeno,ROUND(AVG(HL.vPh),2) vPh,ROUND(avg(HL.vHumedad),2) vHumedad," +
+                "ROUND(AVG(HL.vTemperatura),2) vTemperatura  from lote as L left join usuario as U on L.fk_email_usuario = U.email_usuario " +
+                "left join tipo_peso as TP on L.fk_tipo_peso = TP.id_tipo_peso left join mercado as M on L.fk_id_mercado = M.id_mercado " +
+                "left join historial_lote as HL on L.id_lote = HL.FK_lote where !ISNULL(L.fechaIngreso) and L.activo = 1 " +
+                "group by L.id_lote) as  table1 left join lote_salida as LS on table1.id_lote = LS.FK_Lote " +
+                "order by table1.fechaIngreso,table1.fechaDespacho desc;"
 
             var datos = await conn.query(sql)
             await conn.end()
@@ -180,6 +202,22 @@ class LoteModel
         }
     }
 
+
+    /** EDIT LOTE DESTINO**/
+    static async updateLoteDestinoModel(id_lote,email,destino,telefono)
+    {
+        var sql = "update lote_salida set destino = '"+destino+"',correo_destino = '"+email+"',telefono_destino = '"+telefono+"' where  FK_Lote = "+id_lote
+        console.log(sql)
+        try {
+            var conn = await connDB().promise()
+            await conn.query(sql)
+            await conn.end()
+            return true
+        }catch (e) {
+            console.log(e)
+            return false
+        }
+    }
 
     /** ALL INSUMO POR LOTE REPORTE **/
 

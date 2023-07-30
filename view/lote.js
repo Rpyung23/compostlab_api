@@ -317,4 +317,42 @@ app.get("/readEstadisticoLote/:lote",async function(req, res)
 
 })
 
+
+app.put("/update_lote_salida",Jwt.veriJwt,async function(req,res)
+{
+    var result = await LoteController.updateLoteDestinoController(req.body.id_lote,req.body.email,req.body.destino,
+        req.body.telefono)
+    //console.log(req.body)
+    try{
+        res.status(200).json({
+            status_code: result > 0 ? 200 : 300,
+            msm: result > 0 ? 'Lote Salida actualizado' : 'No se pudo actualizar el Lote',
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm: e.toString()
+        })
+    }
+
+})
+
+app.delete("/eliminar_lote",Jwt.veriJwt,async function(req,res)
+{
+    var result = await LoteController.deleteLoteController(req.body.id_lote)
+    //console.log(req.body)
+    try{
+        res.status(200).json({
+            status_code: result > 0 ? 200 : 300,
+            msm: result > 0 ? 'Lote eliminado' : 'No se pudo eliminar el Lote',
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm: e.toString()
+        })
+    }
+
+})
+
 module.exports = app

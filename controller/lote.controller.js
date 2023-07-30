@@ -61,6 +61,14 @@ class LoteController
     static async readEstadiscicoDetalleLoteController(lote){
         return await LoteModel.readEstadiscicoDetalleLoteModel(lote)
     }
+
+    static async updateLoteDestinoController(id_lote,email,destino,telefono){
+        return await LoteModel.updateLoteDestinoModel(id_lote,email,destino,telefono)
+    }
+
+    static async deleteLoteController(id_lote){
+        return await LoteModel.deleteLoteModel(id_lote)
+    }
 }
 
 module.exports = LoteController
