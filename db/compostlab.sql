@@ -160,6 +160,6 @@ insert into tipo_peso(detalle_tipo_peso) values ('KILOS');
 
 -- CONSULTAS
 use compostlab;
-select * from usuario;
+select * from fases;
 
 
