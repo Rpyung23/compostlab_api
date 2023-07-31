@@ -36,7 +36,7 @@ class MercadoModel
     {
         try {
             var conn = await connDB().promise()
-            var datos = await conn.query("select * from mercado")
+            var datos = await conn.query("select * from mercado where estado = 1")
             await conn.end()
             return datos[0];
         }catch (e) {
@@ -78,6 +78,28 @@ class MercadoModel
             return []
         }
     }
+
+
+    static async readOrganicoImpropioMercadoReportModel(mercados)
+    {
+        var oSqlMercado = ""
+        if(Array.isArray(mercados)){
+            oSqlMercado = "and M.id_mercado in ("+mercados+") "
+        }
+
+        var sql = "select M.nombre_mercado,M.cant_impropio_mercado,M.cant_organica_mercado from mercado as M " +
+            "where M.estado = 1 "+oSqlMercado
+        try{
+            var conn = connDB().promise()
+            var datos = await conn.query(sql)
+            await conn.end()
+            return  datos[0]
+        }catch (e) {
+            return []
+        }
+    }
+
+
 }
 
 module.exports = MercadoModel

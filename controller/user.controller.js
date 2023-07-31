@@ -26,11 +26,12 @@ class UserController
                                                  activeUsuarios,activeInsumo,email,
                                                  btn_tabla_mercados,btn_tabla_lotes,
                                                  btn_tabla_insumos,btn_tabla_h_lotes,
-                                                 btn_tabla_despacho,active_estadistico_lote){
+                                                 btn_tabla_despacho,active_estadistico_lote,
+                                                 active_entrada,active_tabla_entrada){
         return await UserModel.updatePermisosUsuarioModel(activeMercado,activeLote, activeHistorial, activeDespacho,
             activeReporte, activeNotificacion, activeRecordatorio, activeUsuarios,activeInsumo,email,btn_tabla_mercados,btn_tabla_lotes,
             btn_tabla_insumos,btn_tabla_h_lotes,
-            btn_tabla_despacho,active_estadistico_lote)
+            btn_tabla_despacho,active_estadistico_lote,active_entrada,active_tabla_entrada)
     }
 }
 

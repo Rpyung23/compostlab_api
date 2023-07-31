@@ -61,7 +61,8 @@ create table lote_salida(idLoteSalida int auto_increment primary key,FK_Lote int
 alter table lote_salida add constraint rel_lote_salida_lote foreign key lote_salida(FK_Lote) references lote(id_lote);
 alter table lote_salida add constraint rel_lote_salida_usuario foreign key lote_salida(FK_Email_Usuario_Salida)
                         references usuario(email_usuario);
-
+alter table usuario add column activeEntrada smallint(1) default 1;
+alter table usuario add column active_options_Entrada smallint(1) default 1;
 -- SQL DEFECTOS
 
 create trigger updateFaseLoteTemperaturaTrigger after insert on historial_lote
@@ -117,6 +118,27 @@ BEGIN
     SELECT estado AS estado;
 END;
 
+CREATE TRIGGER update_peso_lote
+AFTER INSERT ON lote
+FOR EACH ROW
+BEGIN
+    declare cant_organica_mercado_ decimal(10,2) default 0.00;
+    declare peso_lote_kg decimal(10,2) default 0.00;
+    set cant_organica_mercado_ = (select cant_organica_mercado from mercado where id_mercado = new.fk_id_mercado);
+
+    if new.fk_tipo_peso = 1 then
+        set peso_lote_kg = (new.peso * 1000);
+    end if;
+
+    if new.fk_tipo_peso = 2 then
+        set peso_lote_kg = (new.peso * 0.453592);
+    end if;
+
+    set cant_organica_mercado_ =  (cant_organica_mercado_ - peso_lote_kg);
+    update mercado set cant_organica_mercado = cant_organica_mercado_ where id_mercado = new.fk_id_mercado;
+END;
+
+
 insert into fases(detalleFase, minValorFase, maxValorFase) VALUES ('Sin Fase',0,0);
 insert into fases(detalleFase, minValorFase, maxValorFase) VALUES ('Fase Mesófila ',15,45);
 insert into fases(detalleFase, minValorFase, maxValorFase) VALUES ('Fase Termófila ',45,70);
@@ -138,4 +160,6 @@ insert into tipo_peso(detalle_tipo_peso) values ('KILOS');
 
 -- CONSULTAS
 use compostlab;
-select * from actividad;
+select * from usuario;
+
+

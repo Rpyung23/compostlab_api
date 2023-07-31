@@ -99,4 +99,22 @@ app.get("/all_mercados_active",async function (req, res)
     }
 })
 
+app.post("/r_organico_impropio_mercados",async function (req,res){
+    var result = await MercadoController.readOrganicoImpropioMercadoReportController(req.body.mercado);
+
+    try{
+        res.status(200).json({
+            status_code: result.length > 0 ? 200 : 300,
+            msm: result.length > 0 ? 'Mercados encontrados' : 'No existen Mercados',
+            datos: result
+        })
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm: e.toString(),
+            datos: []
+        })
+    }
+})
+
 module.exports = app
