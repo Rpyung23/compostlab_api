@@ -160,6 +160,11 @@ insert into tipo_peso(detalle_tipo_peso) values ('KILOS');
 
 -- CONSULTAS
 use compostlab;
-select * from fases;
+select * from mercado;
+select table2.nombre_mercado,if(table2.cant_organica_mercado<0,0,table2.cant_organica_mercado) cant_organica_mercado,count(table2.id_lote) totLotes,sum(table2.PesoKL) totalPeso
+       from (select L.id_lote,M.nombre_mercado,M.cant_organica_mercado,ROUND(if(L.fk_tipo_peso = 1,L.peso * 1000,
+       if(L.fk_tipo_peso = 2,L.peso *  0.45359237,L.peso)),2) PesoKL,L.fk_id_mercado,fk_tipo_peso
+       from lote as L inner join mercado as M on M.id_mercado = L.fk_id_mercado where L.activo = 1 ) as table2
+       group by table2.fk_id_mercado
 
 

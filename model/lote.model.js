@@ -236,12 +236,14 @@ class LoteModel
             "inner join insumo as I on IL.fk_id_insumo = I.id_insumo " +
             "where L.activo = 1 and L.fk_email_usuario = '"+email+"'"+oSqlLotes*/
 
-        var sql = "select L.nombre_lote,M.nombre_mercado,I.nombre_insumo,IL.cantidad," +
+        var sql = "select L.nombre_lote,M.nombre_mercado,TP.detalle_tipo_peso,I.nombre_insumo,IL.cantidad," +
             "convert(IL.fecha_ingreso,char(150)) fecha_ingresoInsumo " +
             "from lote as L inner join mercado as M on M.id_mercado = L.fk_id_mercado " +
             "inner join insumo_lote as IL on IL.fk_id_lote = L.id_lote " +
             "inner join insumo as I on IL.fk_id_insumo = I.id_insumo " +
-            "where L.activo = 1 "+oSqlLotes
+            "inner join tipo_peso as TP on I.fk_tipo_peso = TP.id_tipo_peso where L.activo = 1 "+oSqlLotes
+
+        console.log(sql)
 
         try {
             var conn = await connDB().promise()
