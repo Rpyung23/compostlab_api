@@ -6,9 +6,11 @@ class LoteModel
                                       fk_id_mercado,dia_notification,estado,residuo,fase){
         try{
             var conn = await connDB().promise()
-            await conn.query("update lote set nombre_lote = '"+nombre_lote+"',peso = "+peso+",fk_tipo_peso ="+fk_tipo_peso+"," +
+            var sql = "update lote set nombre_lote = '"+nombre_lote+"',peso = "+peso+",fk_tipo_peso ="+fk_tipo_peso+"," +
                 "fk_id_mercado = "+fk_id_mercado+",dia_notificacion = "+dia_notification+"," +
-                "observacion_lote = '"+observacion_lote+"',activo = "+estado+",fk_id_residuo = "+residuo+",FkIDFase="+fase+" where id_lote = "+id_lote)
+                "observacion_lote = '"+observacion_lote+"',activo = "+estado+",fk_id_residuo = "+residuo+",FkIDFase="+fase+" where id_lote = "+id_lote
+            await conn.query(sql)
+            console.log(sql)
             await conn.end()
             return true
         }catch (e) {
